@@ -7,10 +7,20 @@ from nltk.stem import WordNetLemmatizer
 try:
     nltk.data.find('corpora/stopwords')
     nltk.data.find('corpora/wordnet')
+    nltk.data.find('corpora/omw-1.4')
 except LookupError:
     nltk.download('stopwords')
     nltk.download('wordnet')
     nltk.download('omw-1.4')
+
+from nltk.corpus import wordnet
+
+# Force lazy loader to initialize
+try:
+    wordnet.ensure_loaded()
+except AttributeError:
+    # Fallback for older/newer versions where ensure_loaded might not work or behave differently
+    wordnet.synsets('hello')
 
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words('english'))

@@ -69,11 +69,20 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     margin-top: 0;
 }
 
@@ -102,7 +111,9 @@ label {
     color: var(--accent);
 }
 
-textarea, input[type="text"], input[type="file"] {
+textarea,
+input[type="text"],
+input[type="file"] {
     width: 100%;
     padding: 1rem;
     background: rgba(0, 0, 0, 0.2);
@@ -115,7 +126,8 @@ textarea, input[type="text"], input[type="file"] {
     box-sizing: border-box;
 }
 
-textarea:focus, input:focus {
+textarea:focus,
+input:focus {
     outline: none;
     border-color: var(--primary);
     background: rgba(0, 0, 0, 0.4);
@@ -201,7 +213,6 @@ textarea {
 .results-table td {
     background: rgba(255, 255, 255, 0.03);
     padding: 1.5rem;
-    first-child: border-radius: 12px 0 0 12px;
 }
 
 .results-table tr td:first-child {
