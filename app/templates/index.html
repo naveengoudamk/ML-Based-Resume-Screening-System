@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <!-- Phosphor Icons for modern icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -23,21 +25,23 @@
     <div class="container">
         <div class="card">
             <h1>Resume Screening & Ranking</h1>
-            <p>Upload resumes and paste a job description. Our AI will analyze, categorize, and rank candidates based on relevance.</p>
-            
+            <p>Upload resumes and paste a job description. Our AI will analyze, categorize, and rank candidates based on
+                relevance.</p>
+
             <form action="/predict" method="POST" enctype="multipart/form-data">
-                
+
                 <div class="form-group">
                     <label for="jd">Job Description</label>
-                    <textarea name="job_description" id="jd" placeholder="Paste the Job Description (JD) here... e.g. 'Looking for a Senior Python Developer with experience in Django, AWS, and Machine Learning...'"></textarea>
+                    <textarea name="job_description" id="jd"
+                        placeholder="Paste the Job Description (JD) here... e.g. 'Looking for a Senior Python Developer with experience in Django, AWS, and Machine Learning...'"></textarea>
                 </div>
 
                 <div class="form-group">
                     <label>Upload Resumes (PDF / DOCX)</label>
                     <div class="file-upload-wrapper">
                         <i class="ph ph-upload-simple upload-icon"></i>
-                        <p>Drag & drop files here or click to browse</p>
-                        <input type="file" name="resume_files" multiple required accept=".pdf,.docx">
+                        <p id="file-label">Drag & drop files here or click to browse</p>
+                        <input type="file" name="resume_files" id="file-input" multiple required accept=".pdf,.docx">
                     </div>
                 </div>
 
@@ -50,5 +54,20 @@
         </div>
     </div>
 
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const fileLabel = document.getElementById('file-label');
+
+        fileInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            if (files.length > 0) {
+                fileLabel.innerHTML = `<strong>${files.length} file(s) selected:</strong><br>` +
+                    Array.from(files).map(f => f.name).join(', ');
+            } else {
+                fileLabel.innerHTML = "Drag & drop files here or click to browse";
+            }
+        });
+    </script>
 </body>
+
 </html>
