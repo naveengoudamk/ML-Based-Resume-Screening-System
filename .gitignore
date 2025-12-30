@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Mac
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# We are keeping the models because they are small, 
+# typically you would ignore *.pkl if they were large.
+# *.pkl

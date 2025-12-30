@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - AI Screener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="ph ph-brain"></i>
+            CV<span>Screener</span>.ai
+        </div>
+        <a href="/" class="btn" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">New Analysis</a>
+    </nav>
+
+    <div class="container">
+
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2>Job Description Analyzed</h2>
+            <p style="white-space: pre-wrap; max-height: 100px; overflow-y: auto; opacity: 0.8;">{{ job_description }}
+            </p>
+        </div>
+
+        <div class="card">
+            <h2><i class="ph ph-list-numbers"></i> Ranked Candidates</h2>
+            <p>We found {{ results|length }} candidates. Here is the ranking based on skill relevance.</p>
+
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th width="10%">Rank</th>
+                        <th width="30%">Filename</th>
+                        <th width="20%">Predicted Role</th>
+                        <th width="15%">Match Score</th>
+                        <th width="25%">Preview</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in results %}
+                    <tr>
+                        <td>
+                            {% if loop.index == 1 %}
+                            <i class="ph ph-trophy" style="color: gold; font-size: 1.5rem;"></i>
+                            {% else %}
+                            #{{ loop.index }}
+                            {% endif %}
+                        </td>
+                        <td style="font-weight: 600;">{{ res.filename }}</td>
+                        <td><span class="category-tag">{{ res.category }}</span></td>
+                        <td>
+                            <span class="score-badge" style="background: 
+                                {% if res.score > 70 %}#00E676
+                                {% elif res.score > 40 %}#FFC107
+                                {% else %}#FF5252{% endif %};">
+                                {{ res.score }}%
+                            </span>
+                        </td>
+                        <td style="font-size: 0.85rem; color: #aaa;">
+                            {{ res.excerpt }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if results|length == 0 %}
+            <div style="text-align: center; padding: 2rem;">
+                <p>No resumes were uploaded or processed.</p>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</body>
+
+</html>
