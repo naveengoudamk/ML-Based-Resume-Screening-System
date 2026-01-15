@@ -22,23 +22,32 @@
     <div class="container">
 
         <div class="card" style="margin-bottom: 2rem;">
-            <h2>Job Description Analyzed</h2>
+            {% if job_description %}
+            <h2><i class="ph ph-file-text"></i> Job Description Analyzed</h2>
             <p style="white-space: pre-wrap; max-height: 100px; overflow-y: auto; opacity: 0.8;">{{ job_description }}
             </p>
+            {% else %}
+            <h2><i class="ph ph-magic-wand"></i> AI Analysis Mode</h2>
+            <p style="opacity: 0.8;">
+                No specific Job Description was provided. We have analyzed each resume to predict its best-fit role
+                and calculated an <strong>ATS Score</strong> against a standard industry job description for that role.
+            </p>
+            {% endif %}
         </div>
 
         <div class="card">
             <h2><i class="ph ph-list-numbers"></i> Ranked Candidates</h2>
-            <p>We found {{ results|length }} candidates. Here is the ranking based on skill relevance.</p>
+            <p>We found {{ results|length }} candidates. Here is the ranking based on profile strength.</p>
 
             <table class="results-table">
                 <thead>
                     <tr>
                         <th width="10%">Rank</th>
-                        <th width="30%">Filename</th>
-                        <th width="20%">Predicted Role</th>
-                        <th width="15%">Match Score</th>
-                        <th width="25%">Preview</th>
+                        <th width="25%">Filename</th>
+                        <th width="15%">Predicted Role</th>
+                        <th width="20%">ATS Score</th>
+                        <th width="15%">AI Recommendation</th>
+                        <th width="15%">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,15 +63,25 @@
                         <td style="font-weight: 600;">{{ res.filename }}</td>
                         <td><span class="category-tag">{{ res.category }}</span></td>
                         <td>
-                            <span class="score-badge" style="background: 
-                                {% if res.score > 70 %}#00E676
-                                {% elif res.score > 40 %}#FFC107
-                                {% else %}#FF5252{% endif %};">
-                                {{ res.score }}%
-                            </span>
+                            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                <span class="score-badge" style="background: 
+                                    {% if res.score > 70 %}#00E676
+                                    {% elif res.score > 40 %}#FFC107
+                                    {% else %}#FF5252{% endif %};">
+                                    {{ res.score }}%
+                                </span>
+                                <span style="font-size: 0.7rem; color: #aaa; margin-top: 4px;">{{ res.score_type
+                                    }}</span>
+                            </div>
                         </td>
-                        <td style="font-size: 0.85rem; color: #aaa;">
-                            {{ res.excerpt }}
+                        <td style="font-size: 0.85rem; color: #ddd;">
+                            Matched to <strong>{{ res.category }}</strong>
+                        </td>
+                        <td>
+                            <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;"
+                                onclick="openModal({{ loop.index0 }})">
+                                View Job <i class="ph ph-eye"></i>
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -77,6 +96,48 @@
 
         </div>
     </div>
+
+    <!-- Modal for Job Description -->
+    <dialog id="jdModal"
+        style="background: #1e1e24; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem; max-width: 600px; width: 90%; backdrop-filter: blur(10px);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 id="modalTitle" style="margin: 0; color: #00D2FF;">Job Description</h2>
+            <button onclick="closeModal()"
+                style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;"><i
+                    class="ph ph-x"></i></button>
+        </div>
+        <p style="color: #aaa; margin-bottom: 1rem;">Based on the resume content, our AI suggests this candidate is best
+            suited for the following role. This is the standard JD used for ATS scoring.</p>
+        <div id="modalContent"
+            style="white-space: pre-wrap; max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.9rem; line-height: 1.5;">
+            <!-- Content goes here -->
+        </div>
+    </dialog>
+
+    <script>
+        const analysisResults = {{ results | tojson }};
+        const modal = document.getElementById('jdModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+
+        function openModal(index) {
+            const data = analysisResults[index];
+            modalTitle.innerText = "Recommended Role: " + data.category;
+            modalContent.innerText = data.recommended_jd;
+            modal.showModal();
+        }
+
+        function closeModal() {
+            modal.close();
+        }
+
+        // Close when clicking outside
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.close();
+            }
+        });
+    </script>
 
 </body>
 
