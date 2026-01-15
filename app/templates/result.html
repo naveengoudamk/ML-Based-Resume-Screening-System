@@ -43,10 +43,10 @@
                 <thead>
                     <tr>
                         <th width="10%">Rank</th>
-                        <th width="25%">Filename</th>
+                        <th width="20%">Filename</th>
                         <th width="15%">Predicted Role</th>
-                        <th width="20%">ATS Score</th>
-                        <th width="15%">AI Recommendation</th>
+                        <th width="15%">Match Score</th>
+                        <th width="25%">Missing Keywords</th>
                         <th width="15%">Actions</th>
                     </tr>
                 </thead>
@@ -70,12 +70,28 @@
                                     {% else %}#FF5252{% endif %};">
                                     {{ res.score }}%
                                 </span>
-                                <span style="font-size: 0.7rem; color: #aaa; margin-top: 4px;">{{ res.score_type
-                                    }}</span>
                             </div>
                         </td>
-                        <td style="font-size: 0.85rem; color: #ddd;">
-                            Matched to <strong>{{ res.category }}</strong>
+                        <td>
+                            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                                {% if res.missing_keywords %}
+                                {% for kw in res.missing_keywords[:3] %}
+                                <span
+                                    style="font-size: 0.75rem; background: rgba(255, 82, 82, 0.1); color: #FF5252; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(255, 82, 82, 0.2);">
+                                    {{ kw }}
+                                </span>
+                                {% endfor %}
+                                {% if res.missing_keywords|length > 3 %}
+                                <span style="font-size: 0.75rem; color: #888; align-self: center;">+{{
+                                    res.missing_keywords|length - 3 }} more</span>
+                                {% endif %}
+                                {% else %}
+                                <span
+                                    style="font-size: 0.8rem; color: #00E676; display: flex; align-items: center; gap: 4px;">
+                                    <i class="ph ph-check-circle-fill"></i> Strong Match
+                                </span>
+                                {% endif %}
+                            </div>
                         </td>
                         <td>
                             <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;"

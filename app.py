@@ -78,20 +78,28 @@ def predict():
                 prediction = model.predict(resume_vector)
                 category = prediction[0]
                 
-                # Match Score against Provided JD
+                # Match Score against Provided JD (Old/Standard Method)
                 if jd_vector is not None:
                     score = cosine_similarity(jd_vector, resume_vector)[0][0] * 100
                     score = round(score, 2)
+                    
+                    # Calculate "What to Add" (Missing Keywords) based on User JD
+                    # We use the evaluator helper but ignore its score, using only the missing terms
+                    evaluator = ATSEvaluator(cleaned_resume, cleaned_jd)
+                    _, missing_keywords = evaluator.calculate_keyword_match()
                 else:
                     score = 0
+                    missing_keywords = []
             else:
                 score = 0
+                missing_keywords = []
             
             results.append({
                 'filename': filename,
                 'category': category,
                 'score': score,
-                'excerpt': cleaned_resume[:200] + "..." # Preview
+                'missing_keywords': missing_keywords,
+                'excerpt': cleaned_resume[:200] + "..." 
             })
     
     # Rank resumes by score
