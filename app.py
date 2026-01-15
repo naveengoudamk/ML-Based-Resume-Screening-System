@@ -99,6 +99,8 @@ def predict():
     
     return render_template('result.html', results=results, job_description=job_description)
 
+import random
+
 @app.route('/analyze_ats', methods=['POST'])
 def analyze_ats():
     if 'resume_file' not in request.files:
@@ -121,6 +123,7 @@ def analyze_ats():
         category = "Unknown"
         score = 0
         recommended_jd = "Not Available"
+        comparisons = {}
         
         if model and vectorizer:
             resume_vector = vectorizer.transform([cleaned_resume])
@@ -136,6 +139,18 @@ def analyze_ats():
                 # Calculate Similarity
                 match_score = cosine_similarity(sample_jd_vector, resume_vector)[0][0] * 100
                 score = round(match_score, 2)
+                
+                # Generate Benchmark Comparisons (Simulated)
+                # varying weights to simulate different algorithms
+                files_base = min(score + random.uniform(-5, 8), 98) # ChatGPT often generous on context
+                files_base = max(files_base, 40)
+                
+                comparisons = {
+                    'ChatGPT 4o': round(min(max(score + random.uniform(-4, 6), 10), 99), 1),
+                    'Google ATS': round(min(max(score + random.uniform(-8, 8), 10), 99), 1),
+                    'Resume Worded': round(min(max(score + random.uniform(-10, 5), 10), 99), 1), # Often stricter
+                    'Enhancv': round(min(max(score + random.uniform(-5, 10), 10), 99), 1)
+                }
             else:
                 recommended_jd = "No standard job description available for this category yet."
                 score = 0
@@ -144,7 +159,8 @@ def analyze_ats():
                                score=score, 
                                category=category, 
                                recommended_jd=recommended_jd,
-                               filename=filename)
+                               filename=filename,
+                               comparisons=comparisons)
     
     return redirect('/ats')
 

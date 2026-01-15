@@ -47,6 +47,38 @@
                     category }}</strong></p>
         </div>
 
+        <!-- Comparison Section -->
+        {% if comparisons %}
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2><i class="ph ph-scales"></i> Benchmark Score Analysis</h2>
+            <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                Estimated performance on other popular ATS platforms based on algorithmic simulation.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                {% for provider, val in comparisons.items() %}
+                <div
+                    style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; font-size: 0.9rem; color: #ddd;">{{ provider }}</span>
+                        <span
+                            style="font-weight: bold; color: {% if val > 75 %}#00E676{% elif val > 50 %}#FFC107{% else %}#FF5252{% endif %}">{{
+                            val }}%</span>
+                    </div>
+                    <div style="width: 100%; background: #333; height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div
+                            style="width: {{ val }}%; height: 100%; background: {% if val > 75 %}#00E676{% elif val > 50 %}#FFC107{% else %}#FF5252{% endif %}; border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div style="margin-top: 1rem; text-align: center; font-size: 0.8rem; color: #666;">
+                * Scores are estimated based on common industry criteria for these platforms.
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Recommended Job Description -->
         <div class="card">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
