@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Scanner - CV Screener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Phosphor Icons for modern icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="ph ph-brain"></i>
+            CV<span>Screener</span>.ai
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="/" class="nav-link">Ranking</a>
+            <a href="/ats" class="nav-link active">ATS Scanner</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h1><i class="ph ph-scan"></i> ATS Score Scanner</h1>
+            <p>Upload your resume to check its validity, get a predicted profile role, and compare it against industry
+                standards.</p>
+
+            <form action="/analyze_ats" method="POST" enctype="multipart/form-data">
+
+                <div class="form-group">
+                    <label>Upload Resume (PDF / DOCX)</label>
+                    <div class="file-upload-wrapper">
+                        <i class="ph ph-file-text upload-icon"></i>
+                        <p id="file-label">Drag & drop file here or click to browse</p>
+                        <input type="file" name="resume_file" id="file-input" required accept=".pdf,.docx">
+                    </div>
+                </div>
+
+                <div style="text-align: right;">
+                    <button type="submit" class="btn">Check Score <i class="ph ph-arrow-right"></i></button>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div style="text-align: center; margin-top: 4rem; margin-bottom: 2rem; color: var(--text-muted);">
+            <p style="font-size: 1rem;">
+                Crafted <i class="ph ph-heart-fill" style="color: #ff5252; vertical-align: -2px;"></i> by <strong
+                    style="color: #fff;"> Naveengouda M K </strong>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const fileLabel = document.getElementById('file-label');
+
+        fileInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            if (files.length > 0) {
+                fileLabel.innerHTML = `<strong>Selected:</strong><br>` + files[0].name;
+            } else {
+                fileLabel.innerHTML = "Drag & drop file here or click to browse";
+            }
+        });
+    </script>
+</body>
+
+</html>

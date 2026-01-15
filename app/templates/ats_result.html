@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Analysis Result - CV Screener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="ph ph-brain"></i>
+            CV<span>Screener</span>.ai
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="/" class="nav-link">Ranking</a>
+            <a href="/ats" class="nav-link active">ATS Scanner</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- Result Overview -->
+        <div class="card" style="text-align: center; margin-bottom: 2rem;">
+            <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">ATS Profile Score</h2>
+            <div style="position: relative; width: 150px; height: 150px; margin: 0 auto;">
+                <svg viewBox="0 0 36 36" class="circular-chart" style="width: 100%; height: 100%;">
+                    <path class="circle-bg" d="M18 2.0845
+                        a 15.9155 15.9155 0 0 1 0 31.831
+                        a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#eee" stroke-width="3"
+                        style="opacity: 0.1;" />
+                    <path class="circle" stroke-dasharray="{{ score }}, 100" d="M18 2.0845
+                        a 15.9155 15.9155 0 0 1 0 31.831
+                        a 15.9155 15.9155 0 0 1 0 -31.831" fill="none"
+                        stroke="{% if score > 75 %}#00E676{% elif score > 50 %}#FFC107{% else %}#FF5252{% endif %}"
+                        stroke-width="3" style="transition: stroke-dasharray 0.6s ease 0s;" />
+                    <text x="18" y="20.35" class="percentage"
+                        style="fill: #fff; font-family: sans-serif; font-weight: bold; font-size: 0.5em; text-anchor: middle;">{{
+                        score }}%</text>
+                </svg>
+            </div>
+            <p style="margin-top: 1rem; color: #ccc;">Predicted Role: <strong style="color: #fff; font-size: 1.2rem;">{{
+                    category }}</strong></p>
+        </div>
+
+        <!-- Recommended Job Description -->
+        <div class="card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <h2><i class="ph ph-briefcase"></i> Recommended Job Description</h2>
+                <div
+                    style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem;">
+                    Targeting: <strong>{{ category }}</strong>
+                </div>
+            </div>
+
+            <p style="color: #bbb; line-height: 1.6; margin-bottom: 2rem;">
+                Based on your resume, our AI identified that you are applying for a {{ category }} role. Below is the
+                standard industry job description we used to calculate your ATS score. Tailor your resume closer to this
+                standard to improve your score!
+            </p>
+
+            <div
+                style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <pre
+                    style="white-space: pre-wrap; font-family: 'Inter', sans-serif; color: #ddd; font-size: 0.95rem;">{{ recommended_jd }}</pre>
+            </div>
+
+            <div style="margin-top: 2rem; text-align: center;">
+                <a href="/ats" class="btn" style="background: transparent; border: 1px solid var(--glass-border);">Scan
+                    Another Resume</a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
