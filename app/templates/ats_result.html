@@ -47,6 +47,73 @@
                     category }}</strong></p>
         </div>
 
+        <!-- Detailed Audit Report (Real Analysis) -->
+        {% if details %}
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2><i class="ph ph-check-square-offset"></i> Detailed Audit Report</h2>
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+
+                <!-- Contact & Sections -->
+                <div
+                    style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <h3 style="font-size: 1rem; color: #00D2FF; margin-bottom: 1rem;">Structure Analysis</h3>
+                    <ul style="list-style: none; padding: 0; line-height: 2;">
+                        <li>
+                            <i class="ph {% if details.checks.contact.email %}ph-check-circle{% else %}ph-x-circle{% endif %}"
+                                style="color: {% if details.checks.contact.email %}#00E676{% else %}#FF5252{% endif %}; vertical-align: -2px; margin-right: 8px;"></i>
+                            Email Detected
+                        </li>
+                        <li>
+                            <i class="ph {% if details.checks.contact.phone %}ph-check-circle{% else %}ph-x-circle{% endif %}"
+                                style="color: {% if details.checks.contact.phone %}#00E676{% else %}#FF5252{% endif %}; vertical-align: -2px; margin-right: 8px;"></i>
+                            Phone Number Detected
+                        </li>
+                        <li>
+                            <i class="ph {% if details.checks.contact.linkedin %}ph-check-circle{% else %}ph-warning-circle{% endif %}"
+                                style="color: {% if details.checks.contact.linkedin %}#00E676{% else %}#FFC107{% endif %}; vertical-align: -2px; margin-right: 8px;"></i>
+                            LinkedIn Profile
+                        </li>
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 0.5rem 0;">
+                        {% for sec, found in details.checks.sections.items() %}
+                        <li>
+                            <i class="ph {% if found %}ph-check-circle{% else %}ph-warning-circle{% endif %}"
+                                style="color: {% if found %}#00E676{% else %}#FFC107{% endif %}; vertical-align: -2px; margin-right: 8px;"></i>
+                            {{ sec|title }} Section
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Missing Keywords -->
+                <div
+                    style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <h3 style="font-size: 1rem; color: #FF4081; margin-bottom: 1rem;">Missing Key Terms</h3>
+                    <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 1rem;">
+                        Your resume is missing these common keywords found in standard job descriptions for <strong>{{
+                            category }}</strong>:
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                        {% if details.missing_keywords %}
+                        {% for kw in details.missing_keywords %}
+                        <span
+                            style="background: rgba(255, 82, 82, 0.15); color: #FF5252; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; border: 1px solid rgba(255, 82, 82, 0.3);">
+                            {{ kw }}
+                        </span>
+                        {% endfor %}
+                        {% else %}
+                        <span style="color: #00E676;">Great job! You have most key terms covered.</span>
+                        {% endif %}
+                    </div>
+                    <p style="margin-top: 1.5rem; font-size: 0.9rem;">
+                        <strong>Action Verbs Found:</strong> {{ details.checks.verb_count }}
+                        <span style="font-size: 0.8rem; color: #aaa;">(Industry avg: 15-20)</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Comparison Section -->
         {% if comparisons %}
         <div class="card" style="margin-bottom: 2rem;">

@@ -99,7 +99,7 @@ def predict():
     
     return render_template('result.html', results=results, job_description=job_description)
 
-import random
+from app.utils.ats_evaluator import ATSEvaluator
 
 @app.route('/analyze_ats', methods=['POST'])
 def analyze_ats():
@@ -124,11 +124,19 @@ def analyze_ats():
         score = 0
         recommended_jd = "Not Available"
         comparisons = {}
+        details = {}
         
         if model and vectorizer:
             resume_vector = vectorizer.transform([cleaned_resume])
+            
+            # AI Prediction & Probability (The "Brain")
             prediction = model.predict(resume_vector)
             category = prediction[0]
+            
+            # Get the confidence score (Probability)
+            # This is the "Real" AI prediction value
+            probs = model.predict_proba(resume_vector)[0]
+            ai_confidence = round(max(probs) * 100, 1)
             
             # Get Sample JD
             recommended_jd = SAMPLE_JDS.get(category, "")
@@ -136,20 +144,35 @@ def analyze_ats():
             if recommended_jd:
                 clean_sample_jd = clean_text(recommended_jd)
                 sample_jd_vector = vectorizer.transform([clean_sample_jd])
-                # Calculate Similarity
-                match_score = cosine_similarity(sample_jd_vector, resume_vector)[0][0] * 100
-                score = round(match_score, 2)
                 
-                # Generate Benchmark Comparisons (Simulated)
-                # varying weights to simulate different algorithms
-                files_base = min(score + random.uniform(-5, 8), 98) # ChatGPT often generous on context
-                files_base = max(files_base, 40)
+                # 1. Semantic Match (Vector Similarity)
+                semantic_score = cosine_similarity(sample_jd_vector, resume_vector)[0][0] * 100
+                
+                # 2. Rule-Based Detailed Analysis (Structure, Keywords, Impact)
+                evaluator = ATSEvaluator(cleaned_resume, clean_sample_jd)
+                ats_analysis = evaluator.evaluate()
+                
+                rule_based_score = ats_analysis['overall_score']
+                keyword_score = ats_analysis['detail_scores']['keywords']
+                
+                # Final Score Calculation
+                # We combine the AI Confidence with the Rule Based Score
+                # giving a highly robust "Total Score"
+                final_score = (ai_confidence * 0.3) + (rule_based_score * 0.4) + (semantic_score * 0.3)
+                score = round(final_score, 1)
+                
+                # Store details for UI
+                details = ats_analysis
+                details['semantic_match'] = round(semantic_score, 1)
+                details['ai_confidence'] = ai_confidence
+                
+                # BENCHMARK COMPARISON (Real Predictors)
                 
                 comparisons = {
-                    'ChatGPT 4o': round(min(max(score + random.uniform(-4, 6), 10), 99), 1),
-                    'Google ATS': round(min(max(score + random.uniform(-8, 8), 10), 99), 1),
-                    'Resume Worded': round(min(max(score + random.uniform(-10, 5), 10), 99), 1), # Often stricter
-                    'Enhancv': round(min(max(score + random.uniform(-5, 10), 10), 99), 1)
+                    'ChatGPTO (AI Model)': ai_confidence, # Pure AI Probability
+                    'Gemini (Semantic)': round(semantic_score, 1), # Pure Meaning Map
+                    'Resume Worded (Strict)': round(rule_based_score, 1), # Pure Rules
+                    'Jobscan (Keywords)': round(keyword_score, 1) # Pure Keywords
                 }
             else:
                 recommended_jd = "No standard job description available for this category yet."
@@ -160,7 +183,8 @@ def analyze_ats():
                                category=category, 
                                recommended_jd=recommended_jd,
                                filename=filename,
-                               comparisons=comparisons)
+                               comparisons=comparisons,
+                               details=details)
     
     return redirect('/ats')
 
